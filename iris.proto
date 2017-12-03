@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+// Format of data sent via serial connection
+message MessageData {
+    enum Signal {
+        None = 0;
+        Confirm = 1;
+        Error = 2;
+        RequestNext = 3;
+        DownloadConfiguration = 10;
+        UploadConfiguration = 11;
+        // A reply to a RequestInfo signal shall be a string starting
+        // with \x04 (End of transmission) to allow distinguishing
+        // it from a protobuf message.
+        //
+        // This is unambiguous because it will be read by a protobuf 
+        // parser as wire-type "End group", which can never appear 
+        // at the beginning of a message. This will cause a DecodeError.
+        //
+        // MessageData does not contain an optional string due to RAM
+        // limitations of the Arduino. Writing a continuous string
+        // allows for infinitely long output.
+        //
+        // Client applications are expected to adapt to this fact.
+        // Not handling it properly will lead to a hard failure in
+        // the form of a DecodeError.
+        RequestInfo = 15;
+    };
+    oneof content {
+        Signal signal = 1;
+        Configuration configuration = 2;
+        SingleCue single_cue = 3;
+        SingleSchedule single_schedule = 4;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+//
+//           THE DEFINITIONS BELOW ARE SUBJECT TO CHANGE AND 
+//             MAY NOT BE COMPATIBLE WITH THE 1.0 RELEASE!
+//                          USE  WITH CAUTION!
+//
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+// Use for storing configuration in a file
+message Configuration {
+    repeated Cue all_cues = 2;
+    repeated Schedule all_schedules = 3;
+}
+
+// Use for serial upload to Iris where RAM is limited
+message SingleCue {
+    uint32 cue_id = 1;
+    Cue cue = 2;
+}
+
+message SingleSchedule {
+    uint32 schedule_id = 1;
+    Schedule schedule = 2;
+}
+
+//------------------------
+// Actual data structures
+//------------------------
+message Cue {
+    repeated bool channels = 1;
+    bool reverse = 2;
+    bool wrap_hue = 3;
+    uint32 time_divisor = 4;
+    uint32 delay = 5;
+    uint32 duration = 6;
+    enum RampType {
+        jump = 0;
+        linearRGB = 1;
+        linearHSL = 2;
+    };
+    RampType ramp_type = 7;
+    uint32 ramp_parameter = 8;
+
+    message Color {
+        //None of these should ever be higher than 255
+        uint32 red = 1;
+        uint32 green = 2;
+        uint32 blue = 3;
+    };
+    Color start_color = 9;
+    Color end_color = 10;
+    Color offset_color = 11;
+}
+
+// Schedules are used to display multiple Cues at once.
+message Schedule {
+    // Each Cue is represented by one Period, the 
+    message Period{
+        uint32 cue_id = 1;
+        repeated uint32 delays = 2;
+    }
+    repeated Period periods = 1;
+}
