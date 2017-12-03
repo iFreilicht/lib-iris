@@ -29,8 +29,13 @@ message MessageData {
     oneof content {
         Signal signal = 1;
         Configuration configuration = 2;
-        SingleCue single_cue = 3;
-        SingleSchedule single_schedule = 4;
+        // Use Cues and Schedules directly when transmitting to/from
+        // the iris, as a full configuration object is too large
+        // Cues and Schedules must bes sent in order, whether Cues or
+        // Schedules are sent first shall not matter. They may also be
+        // sent interlaced.
+        Cue cue = 3;
+        Schedule schedule = 4;
     }
 }
 
@@ -48,17 +53,6 @@ message MessageData {
 message Configuration {
     repeated Cue all_cues = 2;
     repeated Schedule all_schedules = 3;
-}
-
-// Use for serial upload to Iris where RAM is limited
-message SingleCue {
-    uint32 cue_id = 1;
-    Cue cue = 2;
-}
-
-message SingleSchedule {
-    uint32 schedule_id = 1;
-    Schedule schedule = 2;
 }
 
 //------------------------
