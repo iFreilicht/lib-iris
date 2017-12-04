@@ -11,3 +11,7 @@ arduino: iris.proto
 
 test: iris.proto
 	protoc iris.proto --python_out=. --nanopb_out=.
+
+clean:
+	rm -f ../iris.pb.? ../iris_pb2.py
+	rm -f iris.pb.? iris_pb2.py
