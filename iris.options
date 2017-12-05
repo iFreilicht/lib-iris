@@ -1,0 +1,13 @@
+# Define byte sizes of fields on Arduino
+# This is only used by the nanopb generator
+
+Cue.time_divisor        int_size:IS_8
+Cue.delay               int_size:IS_16
+Cue.duration            int_size:IS_DEFAULT
+Cue.ramp_parameter      int_size:IS_DEFAULT
+
+Cue.Color.red           int_size:IS_8
+Cue.Color.green         int_size:IS_8
+Cue.Color.blue          int_size:IS_8
+
+Schedule.Period.cue_id  int_size:IS_8
