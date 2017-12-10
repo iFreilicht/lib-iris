@@ -10,4 +10,5 @@ Cue.Color.red           int_size:IS_8
 Cue.Color.green         int_size:IS_8
 Cue.Color.blue          int_size:IS_8
 
+Schedule.duration       int_size:IS_16
 Schedule.Period.cue_id  int_size:IS_8

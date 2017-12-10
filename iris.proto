@@ -91,5 +91,6 @@ message Schedule {
         uint32 cue_id = 1;
         repeated uint32 delays = 2;
     }
-    repeated Period periods = 1;
+    uint32 duration = 1;
+    repeated Period periods = 2;
 }
